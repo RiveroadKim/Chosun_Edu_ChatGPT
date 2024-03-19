@@ -36,3 +36,8 @@ OpenAI사의 GPT 모델을 활용한 챗봇 개발하기
 
 ### LangChain 설치
     pip install langchain
+
+### .env
+   파일을 숨겨서 이용하기
+   .gitignore에 .env, env/ 추가하기
+   
