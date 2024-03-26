@@ -3,3 +3,4 @@ Install Library
 openai
 langchain
 python-dotenv
+tiktoken

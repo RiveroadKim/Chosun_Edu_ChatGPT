@@ -6,7 +6,7 @@ from dotenv import load_dotenv, find_dotenv
 
 _ = load_dotenv(find_dotenv())
 
-prompt = load_prompt("./data.json")
+prompt = load_prompt("./Lecture/data.json")
 # prompt = load_prompt("./data/yaml")
 
 chat = ChatOpenAI(
@@ -15,4 +15,5 @@ chat = ChatOpenAI(
     streaming=True,
     callbacks=[StreamingStdOutCallbackHandler()]
 )
-prompt.format(country="Japan")
+
+print(prompt.format(country="Japan"))
