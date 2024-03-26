@@ -12,18 +12,18 @@ chat = ChatOpenAI(
     temperature=0.1,
     # 답변 생성하는 과정을 시각화 가능
     streaming=True,
-    callbacks=[StreamingStdOutCallbackHandler]
+    callbacks=[StreamingStdOutCallbackHandler()]
 )
 
 chef_prompt = ChatPromptTemplate.from_messages([
-    ("system","당신은 전세계에서 유명한 요리사입니다. 찾기쉬운 재료를 사용해서 모든 종류의 요리에 대해 쉽게 따라할 수 있는 레시피를 만드세요.")
+    ("system","당신은 전세계에서 유명한 요리사입니다. 찾기쉬운 재료를 사용해서 모든 종류의 요리에 대해 쉽게 따라할 수 있는 레시피를 만드세요."),
     ("human","나는 {cook} 요리를 만들고 싶어요!")
 ])
 # chain 1 생성(=> 음식 종류)
 chef_chain = chef_prompt | chat
 
 veg_chef_prompt = ChatPromptTemplate.from_messages([
-    ("system","당신은 전통적인 요리법을 채식으로 만드는 채식주위 요리사입니다. 대체 재료를 찾고 그 준비과정을 설명하세요. 근본적으로 레시피를 수정하지는 말고, 대체재료가 없는 경우 없다고 하세요.")
+    ("system","당신은 전통적인 요리법을 채식으로 만드는 채식주위 요리사입니다. 대체 재료를 찾고 그 준비과정을 설명하세요. 근본적으로 레시피를 수정하지는 말고, 대체재료가 없는 경우 없다고 하세요."),
     ("human","{recipe}")
 ])
 # Chian2 생성(=> recipe)

@@ -4,20 +4,13 @@ from langchain.prompts import PromptTemplate, ChatPromptTemplate
 from langchain.callbacks import StreamingStdOutCallbackHandler
 import os
 from dotenv import load_dotenv, find_dotenv
-
-# Fewshot Learning
-#   - 모델에게 생성하는 대답의 예제를 전달
-#   - 기본적인 messages(system)을 활용한 엔지니어링보다 훨씬 더 강력한 성능을 보임
-#   - 즉, prompt 작성보다 예제를 보여주는 fewshot이 훨씬 더 좋음
-#   - 대화기록 등 DB에서 가져와서 fewshot 사용
+from langchain.prompts.example_selector.base import BaseExampleSelector
 
 _ = load_dotenv(find_dotenv())
 
-# 1.Chat 모델 생성
 chat = ChatOpenAI(
     openai_api_key=os.getenv("OPENAI_API_KEY"),
     temperature=0.1,
-    # 답변 생성하는 과정을 시각화 가능
     streaming=True,
     callbacks=[StreamingStdOutCallbackHandler()]
 )
@@ -55,13 +48,29 @@ examples = [
     },
 ]
 
+# 1.RandomSelector 설계
+class RandomExampleSelector(BaseExampleSelector):   #상속받음
+    def __init__(self, examples):   # 객체 생성과 초기화
+        self.examples = examples
+    
+    def add_example(self, example):
+        self.examples.append(example)
+    
+    def select_examples(self, input_variables):
+        from random import choice
+        return [choice(self.examples)]
+
+# 2.RandomSelector 생성
+example_selector = RandomExampleSelector(examples=examples)
+
 example_prompt = PromptTemplate.from_template(
     "Human: {question}\nAI:{answer}"
 )
 
 prompt = FewShotPromptTemplate(
     example_prompt=example_prompt,
-    examples=examples,
+    # examples=examples 전체 예제 모두 활용
+    example_selector=example_selector, # 랜덤하게 예제 선택 활용
     suffix="Human: what do you know about {country}?",
     input_variables=["country"],
 )
@@ -70,4 +79,3 @@ chain = prompt | chat
 chain.invoke({
     "country": "Japan"
 })
-
